@@ -18,7 +18,7 @@ func producer(stream Stream) chan *Tweet {
 
 	go func() {
 		for {
-			tweet, err := stream.Next()
+			tweet, err := stream.Next() // 320ms delay x 5 = 1600ms
 			if err == ErrEOF {
 				close(tweets)
 				return
@@ -33,7 +33,7 @@ func producer(stream Stream) chan *Tweet {
 
 func consumer(tweets chan *Tweet) {
 	for tweet := range tweets {
-		if tweet.IsTalkingAboutGo() {
+		if tweet.IsTalkingAboutGo() { //330 ms delay x 5 = 1650ms
 			fmt.Println(tweet.Username, "\ttweets about golang")
 		} else {
 			fmt.Println(tweet.Username, "\tdoes not tweet about golang")
@@ -51,5 +51,5 @@ func main() {
 	// Consumer
 	consumer(tweets)
 
-	fmt.Printf("Process took %s\n", time.Since(start))
+	fmt.Printf("Process took %s\n", time.Since(start)) // Without concurrency, total time at least 1600 + 1650 = 3250ms
 }
